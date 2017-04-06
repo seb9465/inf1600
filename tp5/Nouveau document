@@ -1,0 +1,4 @@
+#!/bin/bash
+gcc -m32 -S tp5.c
+gcc -Wall -m32 -gdwarf-2 -o tp5 tp5.c
+./tp5
