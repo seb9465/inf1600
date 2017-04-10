@@ -1,71 +1,62 @@
-	.file	"tp5.c"
-	.text
-	.globl	Decryption_fct
-	.type	Decryption_fct, @function
-Decryption_fct:
-.LFB0:
-	.cfi_startproc
+	.section	__TEXT,__text,regular,pure_instructions
+	.macosx_version_min 10, 12
+	.globl	_Decryption_fct
+	.p2align	4, 0x90
+_Decryption_fct:                        ## @Decryption_fct
+## BB#0:
 	pushl	%ebp
-	.cfi_def_cfa_offset 8
-	.cfi_offset 5, -8
 	movl	%esp, %ebp
-	.cfi_def_cfa_register 5
-	subl	$16, %esp
+	subl	$8, %esp
 	movl	8(%ebp), %eax
-#APP
-# 16 "tp5.c" 1
-	movl %eax, %eax;rol $8, %eax;bswap %eax;
-# 0 "" 2
-#NO_APP
 	movl	%eax, -4(%ebp)
 	movl	-4(%ebp), %eax
-	leave
-	.cfi_restore 5
-	.cfi_def_cfa 4, 4
-	ret
-	.cfi_endproc
-.LFE0:
-	.size	Decryption_fct, .-Decryption_fct
-	.section	.rodata
-	.align 4
-.LC0:
-	.string	"Repr\303\251sentation crypte en little-endian:   %08x\nRepr\303\251sentation decrypte en big-endian:    %08x\n"
-	.text
-	.globl	main
-	.type	main, @function
-main:
-.LFB1:
-	.cfi_startproc
-	leal	4(%esp), %ecx
-	.cfi_def_cfa 1, 0
-	andl	$-16, %esp
-	pushl	-4(%ecx)
+	## InlineAsm Start
+	movl	%eax, %eax
+	roll	$8, %eax
+	bswapl	%eax
+
+	## InlineAsm End
+	movl	%eax, -8(%ebp)
+	movl	-8(%ebp), %eax
+	addl	$8, %esp
+	popl	%ebp
+	retl
+
+	.globl	_main
+	.p2align	4, 0x90
+_main:                                  ## @main
+## BB#0:
 	pushl	%ebp
-	.cfi_escape 0x10,0x5,0x2,0x75,0
 	movl	%esp, %ebp
-	pushl	%ecx
-	.cfi_escape 0xf,0x3,0x75,0x7c,0x6
-	subl	$20, %esp
-	movl	$-290800641, -12(%ebp)
-	pushl	-12(%ebp)
-	call	Decryption_fct
-	addl	$4, %esp
-	subl	$4, %esp
-	pushl	%eax
-	pushl	-12(%ebp)
-	pushl	$.LC0
-	call	printf
-	addl	$16, %esp
-	movl	$0, %eax
-	movl	-4(%ebp), %ecx
-	.cfi_def_cfa 1, 0
-	leave
-	.cfi_restore 5
-	leal	-4(%ecx), %esp
-	.cfi_def_cfa 4, 4
-	ret
-	.cfi_endproc
-.LFE1:
-	.size	main, .-main
-	.ident	"GCC: (GNU) 6.2.1 20160916 (Red Hat 6.2.1-2)"
-	.section	.note.GNU-stack,"",@progbits
+	subl	$40, %esp
+	calll	L1$pb
+L1$pb:
+	popl	%eax
+	movl	$0, -4(%ebp)
+	movl	$-290800641, -8(%ebp)   ## imm = 0xEEAABBFF
+	movl	-8(%ebp), %ecx
+	movl	-8(%ebp), %edx
+	movl	%edx, (%esp)
+	movl	%eax, -12(%ebp)         ## 4-byte Spill
+	movl	%ecx, -16(%ebp)         ## 4-byte Spill
+	calll	_Decryption_fct
+	movl	-12(%ebp), %ecx         ## 4-byte Reload
+	leal	L_.str-L1$pb(%ecx), %edx
+	movl	%edx, (%esp)
+	movl	-16(%ebp), %edx         ## 4-byte Reload
+	movl	%edx, 4(%esp)
+	movl	%eax, 8(%esp)
+	calll	_printf
+	xorl	%ecx, %ecx
+	movl	%eax, -20(%ebp)         ## 4-byte Spill
+	movl	%ecx, %eax
+	addl	$40, %esp
+	popl	%ebp
+	retl
+
+	.section	__TEXT,__cstring,cstring_literals
+L_.str:                                 ## @.str
+	.asciz	"Repr\303\251sentation crypte en little-endian:   %08x\nRepr\303\251sentation decrypte en big-endian:    %08x\n"
+
+
+.subsections_via_symbols
