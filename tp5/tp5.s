@@ -10,12 +10,18 @@ _Decryption_fct:                        ## @Decryption_fct
 	movl	8(%ebp), %eax
 	movl	%eax, -4(%ebp)
 	movl	-4(%ebp), %eax
-	## InlineAsm Start
-	movl	%eax, %eax
-	roll	$8, %eax
-	bswapl	%eax
-
-	## InlineAsm End
+	andl	$-16777216, %eax        ## imm = 0xFF000000
+	movl	-4(%ebp), %ecx
+	andl	$255, %ecx
+	shll	$16, %ecx
+	orl	%ecx, %eax
+	movl	-4(%ebp), %ecx
+	andl	$65280, %ecx            ## imm = 0xFF00
+	orl	%ecx, %eax
+	movl	-4(%ebp), %ecx
+	andl	$16711680, %ecx         ## imm = 0xFF0000
+	shrl	$16, %ecx
+	orl	%ecx, %eax
 	movl	%eax, -8(%ebp)
 	movl	-8(%ebp), %eax
 	addl	$8, %esp
